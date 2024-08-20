@@ -1,0 +1,14 @@
+{
+  "name": "todo-app-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.3.3",
+    "cors": "^2.8.5",
+    "body-parser": "^1.19.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
