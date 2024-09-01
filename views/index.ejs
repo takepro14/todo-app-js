@@ -14,9 +14,9 @@
     <h1 class="uk-heading-line"><span>TODO List</span></h1>
 
     <!-- TODOリストの追加フォーム -->
-    <form class="uk-grid-small" uk-grid>
+    <form class="uk-grid-small" uk-grid action="/" method="POST" id="todo-form">
       <div class="uk-width-expand">
-        <input class="uk-input" type="text" placeholder="Add a new task" id="todo-input" />
+        <input class="uk-input" type="text" placeholder="Add a new task" id="todo-input" name="task" />
       </div>
       <div class="uk-width-auto">
         <button class="uk-button uk-button-primary" type="submit" id="add-btn">
@@ -25,9 +25,48 @@
       </div>
     </form>
 
+    <script>
+      document.getElementById('todo-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const taskInput = document.getElementById('todo-input');
+        const taskText = taskInput.value.trim();
+
+        if (taskText !== '') {
+          try {
+            const response = await fetch('/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({task: taskText})
+            });
+
+            if (response.ok) {
+              const newTask = await response.json();
+              const todoList = document.getElementById('todo-list');
+              const listItem = document.createElement('li');
+              listItem.textContent = newTask.task;
+
+              todoList.appendChild(listItem);
+              taskInput.value = ''; // フィールドをクリア
+            } else {
+              console.error('Failed to add todo');
+            }
+          } catch (err) {
+            console.error('Error:', err);
+          }
+        }
+      });
+    </script>
+
     <!-- TODOリストの表示 -->
     <ul class="uk-list uk-list-divider uk-margin-top" id="todo-list">
-      <!-- TODOアイテムがここに追加されます -->
+      <% todos.forEach(todo=> { %>
+        <li>
+          <%= todo.task %>
+        </li>
+        <% }); %>
     </ul>
   </div>
 

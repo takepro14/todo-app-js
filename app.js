@@ -37,6 +37,9 @@
 import express from 'express';
 import pg from 'pg';
 const { Pool } = pg;
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 
 // Expressアプリケーション(=サーバー)を作成
 const app = express();
@@ -51,20 +54,48 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+// ESモジュール形式で__dirnameを再定義
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // TODOリストを取得
-app.get('/todos', async (req, res) => {
-  const result = await pool.query('SELECT * FROM todos');
-  res.json(result.rows);
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM todos');
+    const todos = result.rows;
+    res.render('index', { todos });
+  } catch (err) {
+    console.error('Error fetching todos:', err);
+    res.sendStatus(500);
+  }
 });
 
 // 新しいTODOを追加
-app.post('/todos', async (req, res) => {
-  const { task } = req.body;
-  const result = await pool.query(
-    'INSERT INTO todos (task) VALUES ($1) RETURNING *',
-    [task],
-  );
-  res.json(result.rows[0]);
+app.post('/', async (req, res) => {
+  try {
+    const { task } = req.body; // フロントエンドから送られてきたタスクを取得
+    console.log(task);
+
+    // taskが空の場合、エラーを返す
+    if (!task || task.trim() === '') {
+      return res.status(400).json({ error: 'Task cannot be empty' });
+    }
+
+    // データベースにタスクを保存
+    const result = await pool.query(
+      'INSERT INTO todos (task) VALUES ($1) RETURNING *',
+      [task],
+    );
+
+    // 挿入したレコードを返す
+    res.status(201).json(result.rows[0]); // 201 Created を返す
+  } catch (err) {
+    console.error('Error inserting todo:', err);
+    res.status(500).json({ error: 'Failed to add todo' });
+  }
 });
 
 // サーバーを起動
