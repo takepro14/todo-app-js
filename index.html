@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TODO List</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/css/uikit.min.css" />
+</head>
+
+<body>
+  <div class="uk-container uk-margin-top">
+    <h1 class="uk-heading-line"><span>TODO List</span></h1>
+
+    <!-- TODOリストの追加フォーム -->
+    <form class="uk-grid-small" uk-grid>
+      <div class="uk-width-expand">
+        <input class="uk-input" type="text" placeholder="Add a new task" id="todo-input" />
+      </div>
+      <div class="uk-width-auto">
+        <button class="uk-button uk-button-primary" type="submit" id="add-btn">
+          Add
+        </button>
+      </div>
+    </form>
+
+    <!-- TODOリストの表示 -->
+    <ul class="uk-list uk-list-divider uk-margin-top" id="todo-list">
+      <!-- TODOアイテムがここに追加されます -->
+    </ul>
+  </div>
+
+  <!-- UIkit JS -->
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit-icons.min.js"></script>
+
+  <!-- TODOリスト用のスクリプト -->
+  <script>
+    document.getElementById('add-btn').addEventListener('click', (event) => {
+      event.preventDefault();
+
+      const taskInput = document.getElementById('todo-input');
+      const taskText = taskInput.value.trim();
+
+      if (taskText !== '') {
+        const todoList = document.getElementById('todo-list');
+        const listItem = document.createElement('li');
+        listItem.textContent = taskText;
+
+        todoList.appendChild(listItem);
+        taskInput.value = '';
+      }
+    });
+  </script>
+</body>
+
+</html>
