@@ -34,7 +34,7 @@
 
         if (taskText !== '') {
           try {
-            const response = await fetch('/', {
+            const response = await fetch('http://localhost:3000/', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -74,24 +74,6 @@
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit-icons.min.js"></script>
 
-  <!-- TODOリスト用のスクリプト -->
-  <script>
-    document.getElementById('add-btn').addEventListener('click', (event) => {
-      event.preventDefault();
-
-      const taskInput = document.getElementById('todo-input');
-      const taskText = taskInput.value.trim();
-
-      if (taskText !== '') {
-        const todoList = document.getElementById('todo-list');
-        const listItem = document.createElement('li');
-        listItem.textContent = taskText;
-
-        todoList.appendChild(listItem);
-        taskInput.value = '';
-      }
-    });
-  </script>
 </body>
 
 </html>
