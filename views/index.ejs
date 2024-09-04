@@ -25,6 +25,17 @@
       </div>
     </form>
 
+    <!-- TODOリストの表示 -->
+    <ul class="uk-list uk-list-divider uk-margin-top" id="todo-list">
+      <% todos.forEach(todo=> { %>
+        <li>
+          <input type="checkbox" id="todo-<%= todo.id %>" <%=todo.completed ? 'checked' : '' %>
+          onchange="updateTaskStatus(<%= todo.id %>, this.checked)">
+            <%= todo.task %>
+        </li>
+        <% }); %>
+    </ul>
+
     <script>
       document.getElementById('todo-form').addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -58,16 +69,25 @@
           }
         }
       });
+      async function updateTaskStatus(id, completed) {
+        try {
+          const response = await fetch('/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id, completed})
+          });
+
+          if (!response.ok) {
+            console.error('Failed to update task');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
     </script>
 
-    <!-- TODOリストの表示 -->
-    <ul class="uk-list uk-list-divider uk-margin-top" id="todo-list">
-      <% todos.forEach(todo=> { %>
-        <li>
-          <%= todo.task %>
-        </li>
-        <% }); %>
-    </ul>
   </div>
 
   <!-- UIkit JS -->

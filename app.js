@@ -98,6 +98,21 @@ app.post('/', async (req, res) => {
   }
 });
 
+// TODOのステータスを更新
+app.post('/update', async (req, res) => {
+  try {
+    const { id, completed } = req.body;
+    const result = await pool.query(
+      'UPDATE todos SET completed = $1 WHERE id = $2 RETURNING *',
+      [completed, id],
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating todo:', err);
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
+});
+
 // サーバーを起動
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
