@@ -16,11 +16,11 @@
     <!-- TODOリストの追加フォーム -->
     <form class="uk-grid-small" uk-grid action="/" method="POST" id="todo-form">
       <div class="uk-width-expand">
-        <input class="uk-input" type="text" placeholder="Add a new task" id="todo-input" name="task" />
+        <input class="uk-input" type="text" placeholder="TODOを入力してください" id="todo-input" name="task" />
       </div>
       <div class="uk-width-auto">
         <button class="uk-button uk-button-primary" type="submit" id="add-btn">
-          Add
+          登録
         </button>
       </div>
     </form>
@@ -43,30 +43,46 @@
         const taskInput = document.getElementById('todo-input');
         const taskText = taskInput.value.trim();
 
-        if (taskText !== '') {
-          try {
-            const response = await fetch('http://localhost:3000/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({task: taskText})
-            });
+        if (taskText === '') {
+          alert('タスクを入力してください');
+          return;
+        }
 
-            if (response.ok) {
-              const newTask = await response.json();
-              const todoList = document.getElementById('todo-list');
-              const listItem = document.createElement('li');
-              listItem.textContent = newTask.task;
+        try {
+          const response = await fetch('http://localhost:3000/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({task: taskText})
+          });
 
-              todoList.appendChild(listItem);
-              taskInput.value = ''; // フィールドをクリア
-            } else {
-              console.error('Failed to add todo');
-            }
-          } catch (err) {
-            console.error('Error:', err);
+          if (response.ok) {
+
+            const createdTask = await response.json();
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `todo-${createdTask.id}`;
+            checkbox.checked = createdTask.completed;
+            checkbox.onchange = function () {
+              updateTaskStatus(this.id, this.checked);
+            };
+
+            const listItem = document.createElement('li');
+            listItem.appendChild(checkbox);
+            listItem.appendChild(document.createTextNode(createdTask.task));
+            listItem.id = createdTask.id;
+
+            const todoList = document.getElementById('todo-list');
+            todoList.appendChild(listItem);
+
+            taskInput.value = '';
+          } else {
+            console.error('Failed to add todo');
           }
+        } catch (err) {
+          console.error('Error:', err);
         }
       });
       async function updateTaskStatus(id, completed) {
