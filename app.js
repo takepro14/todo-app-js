@@ -113,6 +113,29 @@ app.post('/update', async (req, res) => {
   }
 });
 
+// TODOのリソースを削除
+app.delete('/delete', async (req, res) => {
+  try {
+    const { id } = req.body;
+    const result = await pool.query(
+      'DELETE FROM todos WHERE id = $1 RETURNING *',
+      [id],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    res.json({
+      message: 'Todo deleted successfully',
+      deletedTodo: result.rows[0],
+    });
+  } catch (err) {
+    console.error('Error deleting todo:', err);
+    res.status(500).json({ error: 'Failed to delete todo' });
+  }
+});
+
 // サーバーを起動
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
