@@ -29,9 +29,10 @@
     <ul class="uk-list uk-list-divider uk-margin-top" id="todo-list">
       <% todos.forEach(todo=> { %>
         <li>
-          <input type="checkbox" id="todo-<%= todo.id %>" <%=todo.completed ? 'checked' : '' %>
+          <input class="uk-checkbox" type="checkbox" id="todo-<%= todo.id %>" <%=todo.completed ? 'checked' : '' %>
           onchange="updateTaskStatus(<%= todo.id %>, this.checked)">
             <%= todo.task %>
+              <button class="uk-button uk-align-right">削除する</button>
         </li>
         <% }); %>
     </ul>
